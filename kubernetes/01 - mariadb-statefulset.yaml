@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cs3219-db
+  namespace: cs3219
+  labels:
+    app: cs3219-db
+spec:
+  serviceName: cs3219-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cs3219-db
+  template:
+    metadata:
+      labels:
+        app: cs3219-db
+    spec:
+      containers:
+      - name: mariadb
+        image: qinxutan/mariadb:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_DATABASE
+          value: "cs3219"
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+  volumeClaimTemplates:
+  - metadata:
+      name: mariadb-persistent-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
